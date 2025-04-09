@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Maze Game</title>
+    <link rel="stylesheet" href="styles/styles.css">
+</head>
+
+<body>
+    <canvas id="gameCanvas"></canvas>
+    <script src="javascript/player.js"></script>
+    <script src="javascript/maze.js"></script>
+    <script src="javascript/game.js"></script>
+    <script>
+        window.onload = function () {
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const maze = new Maze(canvas.width, canvas.height);
+            maze.makeMaze();
+            const walls = maze.getWalls();
+            const player = new Player(20, 20);
+
+            let mouseX = player.x;
+            let mouseY = player.y;
+            canvas.addEventListener('mousemove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+                player.setTarget(mouseX, mouseY); 
+            });
+        };
+    </script>
+</body>
+
+</html>
