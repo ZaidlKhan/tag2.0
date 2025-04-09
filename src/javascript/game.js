@@ -1,66 +1,50 @@
+import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS } from '../config.js';
+import { Maze } from './maze.js';
+import { Player } from './player.js';
+import { drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
+
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const VISIBILITY_RADIUS = 75;
+let revealWalls = false;
+canvas.width = COLS * CELL_SIZE;
+canvas.height = ROWS * CELL_SIZE;
 
 const maze = new Maze(canvas.width, canvas.height);
 maze.makeMaze();
 const walls = maze.getWalls();
-const player = new Player(20, 20); 
-document.addEventListener('keydown', (e) => {
-    player.handleKeyPressed(e);
-});
+const rewards = maze.getRewards();
+const player = new Player(10, 10);
 
-document.addEventListener('keyup', (e) => {
-    player.handleKeyReleased(e);
-});
+document.addEventListener('keydown', (e) => player.handleKeyPressed(e));
+document.addEventListener('keyup', (e) => player.handleKeyReleased(e));
 
 function gameLoop() {
     player.move(walls);
-    ctx.fillStyle = 'white';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    drawRectangles(ctx, [{ x: 0, y: 0, width: canvas.width, height: canvas.height }], 'white');
+    drawRectangles(ctx, walls, 'black');
     drawFogOfWar();
-    walls.forEach(wall => {
-        if (isWallVisible(wall, player)) {
-            ctx.fillStyle = '#00FFFF';
-            ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
-        }
-    });
-
+    drawRectangles(ctx, rewards.filter(reward => revealWalls || isRewardVisible(reward, player)), 'gold');
     player.draw(ctx);
     requestAnimationFrame(gameLoop);
 }
 
 function drawFogOfWar() {
-    ctx.save();
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (revealWalls) return;
 
+    ctx.save();
+    drawRectangles(ctx, [{ x: 0, y: 0, width: canvas.width, height: canvas.height }], 'black');
+    
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
-    const centerX = player.x + player.radius / 2;
-    const centerY = player.y + player.radius / 2;
+    const center = getCenter({ x: player.x, y: player.y, width: player.radius, height: player.radius });
     const numberOfRays = 90;
     const angleStep = 360 / numberOfRays;
 
     for (let i = 0; i < numberOfRays; i++) {
         const angle = i * angleStep * Math.PI / 180;
-        const dx = Math.cos(angle);
-        const dy = Math.sin(angle);
-
-        let x = centerX;
-        let y = centerY;
-        let distance = 0;
-
-        while (distance < VISIBILITY_RADIUS) {
-            x = centerX + dx * distance;
-            y = centerY + dy * distance;
-
-            if (isWallAt(x, y)) break;
-            distance += 2;
-        }
-
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        const rayEnd = castRay(center, angle, walls);
+        if (i === 0) ctx.moveTo(rayEnd.x, rayEnd.y);
+        else ctx.lineTo(rayEnd.x, rayEnd.y);
     }
     ctx.closePath();
     ctx.fill();
@@ -68,30 +52,20 @@ function drawFogOfWar() {
     ctx.restore();
 }
 
-function isWallAt(x, y) {
-    return walls.some(wall =>
-        x >= wall.x && x <= wall.x + wall.width &&
-        y >= wall.y && y <= wall.y + wall.height
-    );
-}
+function castRay(center, angle, walls) {
+    const dx = Math.cos(angle);
+    const dy = Math.sin(angle);
+    let x = center.x;
+    let y = center.y;
+    let dist = 0;
 
-function isWallVisible(wall, player) {
-    const playerX = player.x + player.radius / 2;
-    const playerY = player.y + player.radius / 2;
-
-    const wallLeft = wall.x;
-    const wallRight = wall.x + wall.width;
-    const wallTop = wall.y;
-    const wallBottom = wall.y + wall.height;
-
-    const distances = [
-        Math.sqrt((playerX - wallLeft) ** 2 + (playerY - wallTop) ** 2),
-        Math.sqrt((playerX - wallRight) ** 2 + (playerY - wallTop) ** 2),
-        Math.sqrt((playerX - wallLeft) ** 2 + (playerY - wallBottom) ** 2),
-        Math.sqrt((playerX - wallRight) ** 2 + (playerY - wallBottom) ** 2)
-    ];
-
-    return distances.some(dist => dist <= VISIBILITY_RADIUS);
+    while (dist < VISIBILITY_RADIUS) {
+        x = center.x + dx * dist;
+        y = center.y + dy * dist;
+        if (walls.some(wall => isPointInRect({ x, y }, wall))) break;
+        dist += 2;
+    }
+    return { x, y };
 }
 
 gameLoop();

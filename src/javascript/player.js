@@ -1,11 +1,12 @@
-class Player {
+export class Player {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.radius = 20;
+        this.radius = 15;
         this.speed = 3;
         this.dx = 0;
         this.dy = 0;
+        this.score = 0;
     }
 
     draw(ctx) {
