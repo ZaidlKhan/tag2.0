@@ -1,9 +1,13 @@
+// player.js
+import { PLAYER_RADIUS, PLAYER_SPEED } from "../config.js";
+import { collides } from './utils/utils.js';
+
 export class Player {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.radius = 15;
-        this.speed = 3;
+        this.radius = PLAYER_RADIUS;
+        this.speed = PLAYER_SPEED;
         this.dx = 0;
         this.dy = 0;
         this.score = 0;
@@ -20,18 +24,15 @@ export class Player {
         let newX = this.x + this.dx;
         let newY = this.y + this.dy;
 
-        if (!this.collides(newX, this.y, walls)) this.x = newX;
-        if (!this.collides(this.x, newY, walls)) this.y = newY;
-    }
+        const xRect = { x: newX, y: this.y, width: this.radius, height: this.radius };
+        if (!collides(xRect, walls)) {
+            this.x = newX;
+        }
 
-    collides(x, y, walls) {
-        const playerRect = { x, y, width: this.radius, height: this.radius };
-        return walls.some(wall =>
-            playerRect.x < wall.x + wall.width &&
-            playerRect.x + playerRect.width > wall.x &&
-            playerRect.y < wall.y + wall.height &&
-            playerRect.y + playerRect.height > wall.y
-        );
+        const yRect = { x: this.x, y: newY, width: this.radius, height: this.radius };
+        if (!collides(yRect, walls)) {
+            this.y = newY;
+        }
     }
 
     handleKeyPressed(e) {

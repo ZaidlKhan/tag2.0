@@ -11,3 +11,18 @@ body {
     background: #000;
     overflow: hidden;
 }
+
+
+#hud {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    z-index: 10; /* Ensures HUD is above canvas */
+}
+
+#score, #timer {
+    margin-bottom: 10px; /* Space between score and timer */
+}

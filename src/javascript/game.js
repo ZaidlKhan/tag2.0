@@ -1,35 +1,62 @@
-import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS } from '../config.js';
+// javascript/game.js
+import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS, REVEAL_WALLS, TOTAL_REWARDS } from '../config.js';
 import { Maze } from './maze.js';
 import { Player } from './player.js';
-import { drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
+import { HUD } from './hud.js';
+import { collides, drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-let revealWalls = false;
 canvas.width = COLS * CELL_SIZE;
 canvas.height = ROWS * CELL_SIZE;
 
-const maze = new Maze(canvas.width, canvas.height);
+const maze = new Maze();
 maze.makeMaze();
 const walls = maze.getWalls();
-const rewards = maze.getRewards();
+let rewards = maze.getRewards();
 const player = new Player(10, 10);
+const hud = new HUD(TOTAL_REWARDS);
+let lastTime = performance.now();
 
 document.addEventListener('keydown', (e) => player.handleKeyPressed(e));
 document.addEventListener('keyup', (e) => player.handleKeyReleased(e));
 
-function gameLoop() {
-    player.move(walls);
+function gameLoop(timestamp) {
+    const delta = (timestamp - lastTime) / 1000; // Delta time in seconds
+    lastTime = timestamp;
+
+    hud.update(timestamp);
+
+    if (hud.isGameOver()) {
+        hud.drawGameOver(ctx);
+        return;
+    }
+
+    player.move(walls, delta);
+    checkRewardCollection();
+
     drawRectangles(ctx, [{ x: 0, y: 0, width: canvas.width, height: canvas.height }], 'white');
     drawRectangles(ctx, walls, 'black');
     drawFogOfWar();
-    drawRectangles(ctx, rewards.filter(reward => revealWalls || isRewardVisible(reward, player)), 'gold');
+    drawRectangles(ctx, rewards.filter(reward => REVEAL_WALLS || isRewardVisible(reward, player)), 'gold');
     player.draw(ctx);
+
     requestAnimationFrame(gameLoop);
 }
 
+function checkRewardCollection() {
+    const playerRect = { x: player.x, y: player.y, width: player.radius, height: player.radius };
+    rewards = rewards.filter(reward => {
+        if (collides(playerRect, reward)) {
+            hud.collectReward();
+            return false;
+        }
+        return true;
+    });
+}
+
 function drawFogOfWar() {
-    if (revealWalls) return;
+    if (REVEAL_WALLS) return;
 
     ctx.save();
     drawRectangles(ctx, [{ x: 0, y: 0, width: canvas.width, height: canvas.height }], 'black');
@@ -37,7 +64,7 @@ function drawFogOfWar() {
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath();
     const center = getCenter({ x: player.x, y: player.y, width: player.radius, height: player.radius });
-    const numberOfRays = 90;
+    const numberOfRays = 180;
     const angleStep = 360 / numberOfRays;
 
     for (let i = 0; i < numberOfRays; i++) {
@@ -68,4 +95,4 @@ function castRay(center, angle, walls) {
     return { x, y };
 }
 
-gameLoop();
+requestAnimationFrame(gameLoop);
