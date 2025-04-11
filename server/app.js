@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
         lobbies[lobbyCode] = {
             hider: { id: socket.id, x: 10, y: 10 },
             seeker: null,
-            maze: null // Add a place to store the maze data
+            maze: null
         };
         socket.join(lobbyCode);
         socket.emit('lobbyCreated', lobbyCode);
