@@ -1,4 +1,4 @@
-// app.js
+// server.js (assuming you've renamed app.js to server.js)
 const express = require('express');
 const app = express();
 const port = 8000;
@@ -10,18 +10,29 @@ const path = require('path');
 
 const lobbies = {};
 
-app.use(express.static(path.join(__dirname, 'src')));
+app.use(express.static(path.join(__dirname, '..', 'src')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'src', 'index.html'));
 });
+
+function generateNewMaze() {
+    const { Maze } = require('./maze/maze.js');
+    const mazeInstance = new Maze();
+    mazeInstance.makeMaze();
+    return {
+        walls: mazeInstance.getWalls(),
+        rewards: mazeInstance.getRewards()
+    };
+}
 
 io.on('connection', (socket) => {
     socket.on('createLobby', () => {
         const lobbyCode = Math.floor(1000 + Math.random() * 9000).toString();
         lobbies[lobbyCode] = {
             hider: { id: socket.id, x: 10, y: 10 },
-            seeker: null
+            seeker: null,
+            maze: null // Add a place to store the maze data
         };
         socket.join(lobbyCode);
         socket.emit('lobbyCreated', lobbyCode);
@@ -31,9 +42,13 @@ io.on('connection', (socket) => {
         if (lobbies[code] && !lobbies[code].seeker) {
             lobbies[code].seeker = { id: socket.id, x: 50, y: 50 };
             socket.join(code);
+
+            lobbies[code].maze = generateNewMaze();
+
             io.to(code).emit('startGame', {
                 hider: lobbies[code].hider,
-                seeker: lobbies[code].seeker
+                seeker: lobbies[code].seeker,
+                maze: lobbies[code].maze
             });
         } else {
             socket.emit('joinError', 'Lobby not found or full');

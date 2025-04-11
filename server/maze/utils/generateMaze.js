@@ -1,5 +1,5 @@
 // generateMaze.js
-import { CELL_SIZE, COLS, ROWS } from '../../../config.js';
+import { CELL_SIZE, COLS, ROWS } from '../../config.js';
 
 class Cell {
     constructor(row, col) {

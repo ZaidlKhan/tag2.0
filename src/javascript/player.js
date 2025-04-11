@@ -1,4 +1,4 @@
-import { PLAYER_RADIUS, PLAYER_SPEED } from "../../config.js";
+import { PLAYER_RADIUS, PLAYER_SPEED } from '../config.js';
 import { collides } from './utils/utils.js';
 
 export class Player {

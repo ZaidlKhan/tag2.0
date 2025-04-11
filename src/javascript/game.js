@@ -1,6 +1,5 @@
 // javascript/game.js
-import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS, REVEAL_WALLS, TOTAL_REWARDS, PLAYER_RADIUS } from '../../config.js';
-import { Maze } from './maze.js';
+import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS, REVEAL_WALLS, TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
 import { Player } from './player.js';
 import { HUD } from './hud.js';
 import { collides, drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
@@ -40,7 +39,7 @@ const joinLobbyBtn = document.getElementById('join-lobby');
 const lobbyCodeInput = document.getElementById('lobby-code');
 const submitCodeBtn = document.getElementById('submit-code');
 
-let walls, rewards, localPlayer, remotePlayer, hud, lastTime, role, lobbyCode;
+let walls = [], rewards = [], localPlayer, remotePlayer, hud, lastTime, role, lobbyCode;
 
 socket.on('connect', () => {
     console.log('Connected to server:', socket.id);
@@ -93,8 +92,8 @@ socket.on('joinError', (message) => {
     lobbyCodeInput.value = '';
 });
 
-socket.on('startGame', ({ hider, seeker }) => {
-    console.log(`Starting game - Hider: ${hider.id}, Seeker: ${seeker.id}`);
+socket.on('startGame', ({ hider, seeker, maze }) => {
+    console.log(`Starting game - Hider: ${hider.id}, Seeker: ${seeker.id}, Maze:`, maze);
     loadingScreen.style.display = 'none';
     canvas.style.display = 'block';
     hudElement.style.display = 'flex';
@@ -105,6 +104,8 @@ socket.on('startGame', ({ hider, seeker }) => {
         PLAYER_RADIUS
     );
     remotePlayer = { x: role === 'hider' ? seeker.x : hider.x, y: role === 'hider' ? seeker.y : hider.y };
+    walls = maze.walls;
+    rewards = maze.rewards;
     initGame();
 });
 
@@ -121,10 +122,6 @@ socket.on('playerDisconnected', () => {
 });
 
 function initGame() {
-    const maze = new Maze();
-    maze.makeMaze();
-    walls = maze.getWalls();
-    rewards = maze.getRewards();
     hud = new HUD(TOTAL_REWARDS);
     lastTime = performance.now();
     requestAnimationFrame(gameLoop);
@@ -155,14 +152,30 @@ function gameLoop(timestamp) {
     socket.emit('updatePosition', { x: localPlayer.x, y: localPlayer.y, lobbyCode });
 
     drawRectangles(ctx, [{ x: 0, y: 0, width: COLS * CELL_SIZE, height: ROWS * CELL_SIZE }], 'white');
-    drawRectangles(ctx, walls, 'black');
+    drawMaze(walls, ctx); // Draw the maze
     drawFogOfWar();
-    drawRectangles(ctx, rewards.filter(reward => REVEAL_WALLS || isRewardVisible(reward, localPlayer)), 'gold');
+    drawRewards(rewards, ctx); // Draw the rewards
     localPlayer.draw(ctx);
     drawRemotePlayer();
     checkRewardCollection();
 
     requestAnimationFrame(gameLoop);
+}
+
+function drawMaze(walls, ctx) {
+    ctx.fillStyle = 'black';
+    walls.forEach(wall => {
+        ctx.fillRect(wall.x, wall.y, wall.width, wall.height);
+    });
+}
+
+function drawRewards(rewards, ctx) {
+    ctx.fillStyle = 'gold';
+    rewards.forEach(reward => {
+        if (REVEAL_WALLS || isRewardVisible(reward, localPlayer)) {
+            ctx.fillRect(reward.x, reward.y, reward.width, reward.height);
+        }
+    });
 }
 
 function checkRewardCollection() {
@@ -238,4 +251,6 @@ function resetToMainMenu() {
     localPlayer = null;
     remotePlayer = null;
     lobbyCode = null;
+    walls = []; // Clear the walls
+    rewards = []; // Clear the rewards
 }

@@ -1,4 +1,3 @@
-// javascript/hud.js
 export class HUD {
     constructor(totalRewards) {
         this.totalRewards = totalRewards;

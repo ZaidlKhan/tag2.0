@@ -1,5 +1,5 @@
 // maze.js
-import { CELL_SIZE, COLS, ROWS } from '../../config.js';
+import { CELL_SIZE, COLS, ROWS } from '../config.js';
 import { generateMaze } from './utils/generateMaze.js';
 
 export class Maze {
