@@ -2,19 +2,44 @@
 <html>
 
 <head>
-    <title>Maze Game</title>
-    <link rel="stylesheet" href="styles/styles.css">
+    <title>Mazeek</title>
+    <link rel="stylesheet" href="/styles/styles.css">
 </head>
 
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="hud">
-        <div id="score"></div>
-        <div id="timer"></div>
+    <div id="main-menu">
+        <h1>Mazeek</h1>
+        <button id="create-lobby">Create Lobby</button>
+        <button id="join-lobby">Join Lobby</button>
+        <input id="lobby-code" type="text" placeholder="Enter Lobby Code" style="display: none;">
+        <button id="submit-code" style="display: none;">Join</button>
     </div>
-    <script type="module" src="javascript/player.js"></script>
-    <script type="module" src="javascript/maze.js"></script>
-    <script type="module" src="javascript/game.js"></script>
+    <div id="loading-screen">
+        <h1>Waiting for opponent...</h1>
+        <p id="lobby-code-display"></p>
+    </div>
+    <canvas id="gameCanvas" style="display: none;"></canvas>
+    <div id="hud" style="display: none;">
+        <h1>Mazeek</h1>
+        <div id="stats">
+            <div id="score"></div>
+            <div id="timer"></div>
+        </div>
+        <div id="ability-bar">
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Ability 1">
+                <span>Speed - Boosts speed</span>
+            </div>
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Ability 2">
+                <span>Hide - Turns invisible</span>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script type="module" src="/javascript/player.js"></script>
+    <script type="module" src="/javascript/maze.js"></script>
+    <script type="module" src="/javascript/game.js"></script>
 </body>
 
 </html>

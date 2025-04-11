@@ -1,4 +1,4 @@
-import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS } from '../../config.js';
+import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS } from '../../../config.js';
 
 // utils.js
 export function getCenter(obj) {

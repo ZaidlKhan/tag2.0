@@ -5,14 +5,14 @@ export class HUD {
         this.rewardsCollected = 0;
         this.timeLimit = 60;
         this.timeLeft = this.timeLimit;
-        this.lastTimestamp = performance.now(); // Initialize with current time
+        this.lastTimestamp = performance.now();
         this.scoreElement = document.getElementById('score');
         this.timerElement = document.getElementById('timer');
         this.updateDisplay();
     }
 
     update(timestamp) {
-        if (!timestamp) timestamp = performance.now(); // Fallback for first call
+        if (!timestamp) timestamp = performance.now();
         if (this.lastTimestamp) {
             const delta = (timestamp - this.lastTimestamp) / 1000;
             this.timeLeft = Math.max(0, this.timeLeft - delta);
