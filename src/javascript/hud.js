@@ -1,8 +1,10 @@
+import { TIME_LIMIT } from "../config.js";
+
 export class HUD {
     constructor(totalRewards) {
         this.totalRewards = totalRewards;
         this.rewardsCollected = 0;
-        this.timeLimit = 60;
+        this.timeLimit = TIME_LIMIT;
         this.timeLeft = this.timeLimit;
         this.lastTimestamp = performance.now();
         this.scoreElement = document.getElementById('score');

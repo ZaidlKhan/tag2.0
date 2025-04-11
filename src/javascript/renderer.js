@@ -1,3 +1,4 @@
+// src/javascript/renderer.js
 import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS, REVEAL_WALLS, PLAYER_RADIUS } from '../config.js';
 import { drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
 import { getGameState } from './gameLogic.js';
@@ -17,7 +18,9 @@ export function render(ctx) {
     drawFogOfWar(ctx);
     drawRewards(rewards, ctx);
     localPlayer.draw(ctx);
-    drawRemotePlayer(ctx);
+    if (isPlayerVisible(localPlayer, remotePlayer, walls)) {
+        drawRemotePlayer(ctx);
+    }
 }
 
 function drawMaze(walls, ctx) {
@@ -87,4 +90,22 @@ function drawRemotePlayer(ctx) {
     ctx.arc(remotePlayer.x + PLAYER_RADIUS / 2, remotePlayer.y + PLAYER_RADIUS / 2, PLAYER_RADIUS / 2, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
+}
+
+function isPlayerVisible(localPlayer, remotePlayer, walls) {
+    if (!remotePlayer) return false;
+
+    const localCenter = getCenter({ x: localPlayer.x, y: localPlayer.y, width: PLAYER_RADIUS, height: PLAYER_RADIUS });
+    const remoteCenter = getCenter({ x: remotePlayer.x, y: remotePlayer.y, width: PLAYER_RADIUS, height: PLAYER_RADIUS });
+
+    const dx = remoteCenter.x - localCenter.x;
+    const dy = remoteCenter.y - localCenter.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance > VISIBILITY_RADIUS) return false;
+
+    const angle = Math.atan2(dy, dx);
+    const rayEnd = castRay(localCenter, angle);
+
+    const rayDistance = Math.sqrt((rayEnd.x - localCenter.x) ** 2 + (rayEnd.y - localCenter.y) ** 2);
+    return distance <= rayDistance;
 }

@@ -1,3 +1,4 @@
+// src/javascript/gameLogic.js
 import { CELL_SIZE, TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
 import { Player } from './player.js';
 import { HUD } from './hud.js';
@@ -32,7 +33,10 @@ export function startGame(hider, seeker, maze, id) {
         role === 'hider' ? hider.y : seeker.y,
         PLAYER_RADIUS
     );
-    remotePlayer = { x: role === 'hider' ? seeker.x : hider.x, y: role === 'hider' ? seeker.y : hider.y };
+    remotePlayer = {
+        x: role === 'hider' ? seeker.x : hider.x,
+        y: role === 'hider' ? seeker.y : hider.y
+    };
     walls = maze.walls;
     rewards = maze.rewards;
     hud = new HUD(TOTAL_REWARDS);
@@ -47,6 +51,7 @@ export function updateGameLogic(delta) {
     if (hud.isGameOver()) return;
 
     localPlayer.move(walls, delta);
+    console.log(localPlayer.x, localPlayer.y, lobbyCode)
     emitPositionUpdate(localPlayer.x, localPlayer.y, lobbyCode);
 }
 
@@ -64,6 +69,7 @@ export function checkRewardCollection() {
 
 export function updateRemotePlayer(id, x, y) {
     if (id !== socketId) {
+        if (!remotePlayer) remotePlayer = { x, y };
         remotePlayer.x = x;
         remotePlayer.y = y;
     }

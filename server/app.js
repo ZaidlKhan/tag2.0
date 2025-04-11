@@ -1,4 +1,4 @@
-// server.js (assuming you've renamed app.js to server.js)
+// server.js
 const express = require('express');
 const app = express();
 const port = 8000;
@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 const path = require('path');
+const { CELL_SIZE, COLS, ROWS } = require('./config.js');
 
 const lobbies = {};
 
@@ -30,7 +31,7 @@ io.on('connection', (socket) => {
     socket.on('createLobby', () => {
         const lobbyCode = Math.floor(1000 + Math.random() * 9000).toString();
         lobbies[lobbyCode] = {
-            hider: { id: socket.id, x: 10, y: 10 },
+            hider: { id: socket.id, x: CELL_SIZE / 2, y: CELL_SIZE / 2 },
             seeker: null,
             maze: null
         };
@@ -40,9 +41,12 @@ io.on('connection', (socket) => {
 
     socket.on('joinLobby', (code) => {
         if (lobbies[code] && !lobbies[code].seeker) {
-            lobbies[code].seeker = { id: socket.id, x: 50, y: 50 };
+            lobbies[code].seeker = {
+                id: socket.id,
+                x: (COLS - 0.5) * CELL_SIZE,
+                y: (ROWS - 0.5) * CELL_SIZE
+            };
             socket.join(code);
-
             lobbies[code].maze = generateNewMaze();
 
             io.to(code).emit('startGame', {
