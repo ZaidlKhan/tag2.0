@@ -35,11 +35,9 @@ export function getCorners(rect) {
 }
 
 export function collides(rect1, rect2OrArray) {
-    // If rect2OrArray is an array (like walls), check collision with any element
     if (Array.isArray(rect2OrArray)) {
         return rect2OrArray.some(rect => collides(rect1, rect));
     }
-    // Single rectangle collision check
     const rect2 = rect2OrArray;
     return (
         rect1.x < rect2.x + rect2.width &&
@@ -49,10 +47,33 @@ export function collides(rect1, rect2OrArray) {
     );
 }
 
-
 export function isPointInRect(point, rect) {
     return (
         point.x >= rect.x && point.x <= rect.x + rect.width &&
         point.y >= rect.y && point.y <= rect.y + rect.height
     );
+}
+
+export function displayAbilities(abilityBar, role) {
+    abilityBar.innerHTML += `
+        ${role === 'hider' ? `
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Seek">
+                <span>Seek - Reveals Path</span>
+            </div>
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Hide">
+                <span>Hide - Turn Invisible</span>
+            </div>
+        ` : `
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Hunt">
+                <span>Hunt - Track Hider</span>
+            </div>
+            <div class="ability-slot">
+                <img src="https://placehold.co/30x30" alt="Trap">
+                <span>Trap - Place Trap</span>
+            </div>
+        `}
+    `;
 }

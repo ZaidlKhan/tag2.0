@@ -1,4 +1,3 @@
-// src/javascript/gameLogic.js
 import { CELL_SIZE, TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
 import { Player } from './player.js';
 import { HUD } from './hud.js';
@@ -31,15 +30,16 @@ export function startGame(hider, seeker, maze, id) {
     localPlayer = new Player(
         role === 'hider' ? hider.x : seeker.x,
         role === 'hider' ? hider.y : seeker.y,
-        PLAYER_RADIUS
+        role
     );
     remotePlayer = {
         x: role === 'hider' ? seeker.x : hider.x,
-        y: role === 'hider' ? seeker.y : hider.y
+        y: role === 'hider' ? seeker.y : hider.y,
+        radius: PLAYER_RADIUS
     };
     walls = maze.walls;
     rewards = maze.rewards;
-    hud = new HUD(TOTAL_REWARDS);
+    hud = new HUD(TOTAL_REWARDS, localPlayer);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 }
@@ -50,7 +50,8 @@ export function updateGameLogic(delta) {
     hud.update(performance.now());
     if (hud.isGameOver()) return;
 
-    localPlayer.move(walls, delta);
+    localPlayer.update(delta);
+    localPlayer.move(walls);
     emitPositionUpdate(localPlayer.x, localPlayer.y, lobbyCode);
 }
 
@@ -67,15 +68,14 @@ export function checkRewardCollection() {
 }
 
 export function updateRemotePlayer(id, x, y) {
-    if (id !== socketId) {
-        if (!remotePlayer) remotePlayer = { x, y };
+    if (id !== socketId && remotePlayer) {
         remotePlayer.x = x;
         remotePlayer.y = y;
     }
 }
 
 export function getGameState() {
-    return { walls, rewards, localPlayer, remotePlayer, hud, role, lobbyCode };
+    return { walls, rewards, localPlayer, remotePlayer, hud, role, lobbyCode, stamina: localPlayer ? localPlayer.getStamina() : 0 };
 }
 
 export function setLobbyCode(code) {

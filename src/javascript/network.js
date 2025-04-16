@@ -4,10 +4,6 @@ import { startGame, updateRemotePlayer, setLobbyCode, initGameLogic } from './ga
 const socket = io('http://localhost:8000');
 
 export function setupNetwork() {
-    socket.on('connect', () => {
-        console.log('Connected to server:', socket.id);
-    });
-
     socket.on('connect_error', (error) => {
         console.error('Connection error:', error.message);
     });
@@ -18,13 +14,12 @@ export function setupNetwork() {
     });
 
     socket.on('joinError', (message) => {
-        console.log(`Join error: ${message}`);
         showJoinError(message);
     });
 
     socket.on('startGame', ({ hider, seeker, maze }) => {
-        startGameUI();
         startGame(hider, seeker, maze, socket.id);
+        startGameUI();
     });
 
     socket.on('playerMoved', ({ id, x, y }) => {

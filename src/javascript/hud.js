@@ -1,54 +1,53 @@
-import { TIME_LIMIT } from "../config.js";
+import { TIME_LIMIT, STAMINA_MAX } from '../config.js';
 
 export class HUD {
-    constructor(totalRewards) {
+    constructor(totalRewards, player) {
         this.totalRewards = totalRewards;
         this.rewardsCollected = 0;
-        this.timeLimit = TIME_LIMIT;
-        this.timeLeft = this.timeLimit;
-        this.lastTimestamp = performance.now();
-        this.scoreElement = document.getElementById('score');
+        this.startTime = performance.now();
+        this.player = player;
         this.timerElement = document.getElementById('timer');
-        this.updateDisplay();
+        this.scoreElement = document.getElementById('score');
+        this.isGameOverState = false;
     }
 
-    update(timestamp) {
-        if (!timestamp) timestamp = performance.now();
-        if (this.lastTimestamp) {
-            const delta = (timestamp - this.lastTimestamp) / 1000;
-            this.timeLeft = Math.max(0, this.timeLeft - delta);
+    update(currentTime) {
+        if (this.isGameOver()) return;
+
+        const elapsed = (currentTime - this.startTime) / 1000;
+        const timeLeft = Math.max(0, TIME_LIMIT - elapsed);
+        this.timerElement.textContent = `Time: ${Math.floor(timeLeft)}`;
+        this.scoreElement.textContent = `Score: ${this.rewardsCollected}/${this.totalRewards}`;
+
+        const staminaFill = document.getElementById('stamina-fill');
+        if (staminaFill) {
+            const staminaPercent = (this.player.getStamina() / STAMINA_MAX) * 100;
+            staminaFill.style.width = `${staminaPercent}%`;
         }
-        this.lastTimestamp = timestamp;
-        this.updateDisplay();
     }
 
     collectReward() {
         this.rewardsCollected++;
-        this.updateDisplay();
-    }
-
-    isGameOver() {
-        return this.timeLeft <= 0 || this.rewardsCollected >= this.totalRewards;
-    }
-
-    getGameOverMessage() {
-        return this.timeLeft <= 0 ? 'Time’s Up!' : 'All Rewards Collected!';
-    }
-
-    updateDisplay() {
-        this.scoreElement.textContent = `${this.rewardsCollected}/${this.totalRewards}`;
-        const minutes = Math.floor(this.timeLeft / 60);
-        const seconds = Math.floor(this.timeLeft % 60);
-        this.timerElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        this.scoreElement.textContent = `Score: ${this.rewardsCollected}/${this.totalRewards}`;
     }
 
     drawGameOver(ctx) {
-        ctx.save();
-        ctx.font = '40px Arial';
-        ctx.fillStyle = 'red';
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        ctx.fillStyle = 'white';
+        ctx.font = '30px Arial';
         ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(this.getGameOverMessage(), ctx.canvas.width / 2, ctx.canvas.height / 2);
-        ctx.restore();
+        ctx.fillText('Game Over', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        ctx.fillText(`Score: ${this.rewardsCollected}/${this.totalRewards}`, ctx.canvas.width / 2, ctx.canvas.height / 2 + 40);
+    }
+
+    isGameOver() {
+        if (this.isGameOverState) return true;
+        const elapsed = (performance.now() - this.startTime) / 1000;
+        if (elapsed >= TIME_LIMIT || this.rewardsCollected >= this.totalRewards) {
+            this.isGameOverState = true;
+            return true;
+        }
+        return false;
     }
 }

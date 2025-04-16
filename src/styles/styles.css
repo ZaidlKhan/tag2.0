@@ -147,3 +147,41 @@ body {
 .ability-slot span {
     font-size: 14px;
 }
+
+#ui {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+}
+
+#timer,
+#score {
+    margin-bottom: 10px;
+}
+
+#stamina-container {
+    width: 100%;
+}
+
+#stamina-bar {
+    width: 100%;
+    height: 10px;
+    background-color: gray;
+}
+
+#stamina-fill {
+    height: 100%;
+    background-color: green;
+    transition: width 0.1s;
+}
+
+#stamina-label {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+#abilities {
+    margin-top: 10px;
+}

@@ -1,15 +1,18 @@
 import { joinLobby, createLobby, joinRandomLobby } from './network.js';
+import { displayAbilities } from './utils/utils.js';
+import { getGameState } from './gameLogic.js';
 
 const mainMenu = document.getElementById('main-menu');
 const loadingScreen = document.getElementById('loading-screen');
 const lobbyCodeDisplay = document.getElementById('lobby-code-display');
 const hudElement = document.getElementById('hud');
 const createLobbyBtn = document.getElementById('create-lobby');
-const joinRandomBtn = document.getElementById('join-random');
 const joinLobbyBtn = document.getElementById('join-lobby');
+const joinRandomBtn = document.getElementById('join-random');
 const lobbyCodeInput = document.getElementById('lobby-code');
 const submitCodeBtn = document.getElementById('submit-code');
 const canvas = document.getElementById('gameCanvas');
+const abilityBar = document.getElementById('ability-bar');
 
 export function setupUI() {
     createLobbyBtn.addEventListener('click', () => {
@@ -29,7 +32,6 @@ export function setupUI() {
     submitCodeBtn.addEventListener('click', () => {
         const code = lobbyCodeInput.value.trim();
         if (code) {
-            console.log(`Submitting join request for code: ${code}`);
             joinLobby(code);
         }
     });
@@ -56,6 +58,8 @@ export function startGameUI() {
     loadingScreen.style.display = 'none';
     canvas.style.display = 'block';
     hudElement.style.display = 'flex';
+    const { role } = getGameState();
+    displayAbilities(abilityBar, role);
 }
 
 export function resetToMainMenu() {
