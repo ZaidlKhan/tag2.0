@@ -1,4 +1,3 @@
-// src/javascript/network.js
 import { showLobbyCreated, showJoinError, startGameUI, resetToMainMenu } from './ui.js';
 import { startGame, updateRemotePlayer, setLobbyCode, initGameLogic } from './gameLogic.js';
 
@@ -14,7 +13,6 @@ export function setupNetwork() {
     });
 
     socket.on('lobbyCreated', (code) => {
-        console.log(`Lobby created with code: ${code}`);
         showLobbyCreated(code);
         setLobbyCode(code);
     });
@@ -25,13 +23,11 @@ export function setupNetwork() {
     });
 
     socket.on('startGame', ({ hider, seeker, maze }) => {
-        console.log(`Starting game - Hider: ${hider.id}, Seeker: ${seeker.id}, Maze:`, maze);
         startGameUI();
         startGame(hider, seeker, maze, socket.id);
     });
 
     socket.on('playerMoved', ({ id, x, y }) => {
-        console.log(`Player moved - ID: ${id}, x: ${x}, y: ${y}, Local ID: ${socket.id}`);
         updateRemotePlayer(id, x, y);
     });
 
@@ -47,12 +43,14 @@ export function createLobby() {
 }
 
 export function joinLobby(code) {
-    console.log(`Joining lobby with code: ${code}`);
     setLobbyCode(code);
     socket.emit('joinLobby', code);
 }
 
+export function joinRandomLobby() {
+    socket.emit('joinRandomLobby');
+}
+
 export function emitPositionUpdate(x, y, lobbyCode) {
-    console.log(`Emitting position update - x: ${x}, y: ${y}, lobbyCode: ${lobbyCode}`);
     socket.emit('updatePosition', { x, y, lobbyCode });
 }

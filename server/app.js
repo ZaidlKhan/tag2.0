@@ -1,4 +1,4 @@
-// server.js
+const { getRandomLobby, createLobby, joinLobbyAsSeeker, startGame } = require('./maze/utils/utils.js');
 const express = require('express');
 const app = express();
 const port = 8000;
@@ -7,7 +7,6 @@ const server = http.createServer(app);
 const { Server } = require('socket.io');
 const io = new Server(server);
 const path = require('path');
-const { CELL_SIZE, COLS, ROWS } = require('./config.js');
 
 const lobbies = {};
 
@@ -17,45 +16,26 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'src', 'index.html'));
 });
 
-function generateNewMaze() {
-    const { Maze } = require('./maze/maze.js');
-    const mazeInstance = new Maze();
-    mazeInstance.makeMaze();
-    return {
-        walls: mazeInstance.getWalls(),
-        rewards: mazeInstance.getRewards()
-    };
-}
-
 io.on('connection', (socket) => {
     socket.on('createLobby', () => {
-        const lobbyCode = Math.floor(1000 + Math.random() * 9000).toString();
-        lobbies[lobbyCode] = {
-            hider: { id: socket.id, x: CELL_SIZE / 2, y: CELL_SIZE / 2 },
-            seeker: null,
-            maze: null
-        };
-        socket.join(lobbyCode);
-        socket.emit('lobbyCreated', lobbyCode);
+        createLobby(socket, lobbies);
     });
 
     socket.on('joinLobby', (code) => {
-        if (lobbies[code] && !lobbies[code].seeker) {
-            lobbies[code].seeker = {
-                id: socket.id,
-                x: (COLS - 0.5) * CELL_SIZE,
-                y: (ROWS - 0.5) * CELL_SIZE
-            };
-            socket.join(code);
-            lobbies[code].maze = generateNewMaze();
+        if (joinLobbyAsSeeker(socket, code, lobbies)) {
+            startGame(io, code, lobbies);
+        }
+    });
 
-            io.to(code).emit('startGame', {
-                hider: lobbies[code].hider,
-                seeker: lobbies[code].seeker,
-                maze: lobbies[code].maze
-            });
+    socket.on('joinRandomLobby', () => {
+        const randomCode = getRandomLobby(lobbies);
+        if (!randomCode) {
+            createLobby(socket, lobbies);
         } else {
-            socket.emit('joinError', 'Lobby not found or full');
+            if (joinLobbyAsSeeker(socket, randomCode, lobbies)) {
+                socket.emit('lobbyCreated', randomCode);
+                startGame(io, randomCode, lobbies);
+            }
         }
     });
 

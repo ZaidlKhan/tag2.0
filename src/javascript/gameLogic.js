@@ -51,7 +51,6 @@ export function updateGameLogic(delta) {
     if (hud.isGameOver()) return;
 
     localPlayer.move(walls, delta);
-    console.log(localPlayer.x, localPlayer.y, lobbyCode)
     emitPositionUpdate(localPlayer.x, localPlayer.y, lobbyCode);
 }
 

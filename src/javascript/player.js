@@ -10,6 +10,7 @@ export class Player {
         this.dx = 0;
         this.dy = 0;
         this.score = 0;
+        this.isBoosting = false;
     }
 
     draw(ctx) {
@@ -40,6 +41,12 @@ export class Player {
             case 'ArrowDown': this.dy = this.speed; break;
             case 'ArrowLeft': this.dx = -this.speed; break;
             case 'ArrowRight': this.dx = this.speed; break;
+            case ' ':
+                if (!this.isBoosting) {
+                    this.speed += 1;
+                    this.isBoosting = true;
+                }
+                break;
         }
     }
 
@@ -49,6 +56,12 @@ export class Player {
             case 'ArrowDown': this.dy = 0; break;
             case 'ArrowLeft':
             case 'ArrowRight': this.dx = 0; break;
+            case ' ':
+                if (this.isBoosting) {
+                    this.speed -= 1;
+                    this.isBoosting = false;
+                }
+                break;
         }
     }
 }
