@@ -5,13 +5,12 @@ import { getGameState } from './gameLogic.js';
 const mainMenu = document.getElementById('main-menu');
 const loadingScreen = document.getElementById('loading-screen');
 const lobbyCodeDisplay = document.getElementById('lobby-code-display');
-const hudElement = document.getElementById('hud');
+const gameContainer = document.getElementById('game-container');
 const createLobbyBtn = document.getElementById('create-lobby');
 const joinLobbyBtn = document.getElementById('join-lobby');
 const joinRandomBtn = document.getElementById('join-random');
 const lobbyCodeInput = document.getElementById('lobby-code');
 const submitCodeBtn = document.getElementById('submit-code');
-const canvas = document.getElementById('gameCanvas');
 const abilityBar = document.getElementById('ability-bar');
 
 export function setupUI() {
@@ -56,15 +55,13 @@ export function showJoinError(message) {
 export function startGameUI() {
     mainMenu.style.display = 'none';
     loadingScreen.style.display = 'none';
-    canvas.style.display = 'block';
-    hudElement.style.display = 'flex';
+    gameContainer.style.display = 'flex';
     const { role } = getGameState();
     displayAbilities(abilityBar, role);
 }
 
 export function resetToMainMenu() {
-    canvas.style.display = 'none';
-    hudElement.style.display = 'none';
+    gameContainer.style.display = 'none';
     loadingScreen.style.display = 'none';
     mainMenu.style.display = 'flex';
     lobbyCodeInput.style.display = 'none';

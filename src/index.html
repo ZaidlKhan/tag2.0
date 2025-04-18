@@ -8,7 +8,8 @@
 
 <body>
     <div id="main-menu">
-        <h1><img src="/assets/gifs/p.gif" style="width: 60px;">
+        <h1>
+            <img src="/assets/gifs/p.gif" style="width: 60px;">
             <img src="/assets/gifs/e.gif" style="width: 60px;">
             <img src="/assets/gifs/e.gif" style="width: 60px;">
             <img src="/assets/gifs/k.gif" style="width: 60px;">
@@ -28,19 +29,22 @@
         <h1>Waiting for opponent...</h1>
         <p id="lobby-code-display"></p>
     </div>
-    <canvas id="gameCanvas" style="display: none;"></canvas>
-    <div id="hud" style="display: none;">
-        <h1>Mazeek</h1>
-        <div id="stats">
-            <div id="score"></div>
-            <div id="timer"></div>
-        </div>
-        <div id="ability-bar">
+    <div id="game-container" style="display: none;">
+        <canvas id="gameCanvas"></canvas>
+        <div id="hud">
+            <div id="stats">
+                <div id="timer">Time: 0</div>
+                <div id="score">Score: 0/0</div>
+            </div>
             <div id="stamina-container">
                 <div id="stamina-label">Boost</div>
                 <div id="stamina-bar">
                     <div id="stamina-fill" style="width: 100%;"></div>
                 </div>
+            </div>
+            <div id="ability-bar">
+                <div id="ability1" style="display: none;"></div>
+                <div id="ability2" style="display: none;"></div>
             </div>
         </div>
     </div>

@@ -1,4 +1,3 @@
-// src/javascript/game.js
 import { CELL_SIZE, COLS, ROWS } from '../config.js';
 import { setupUI } from './ui.js';
 import { initGameLogic, updateGameLogic, checkRewardCollection } from './gameLogic.js';
@@ -12,10 +11,10 @@ let lastTime;
 
 function resizeCanvas() {
     const aspectRatio = COLS * CELL_SIZE / (ROWS * CELL_SIZE);
-    let width = window.innerWidth - 200;
-    let height = window.innerHeight;
-    const borderWidth = 20;
-    const borderHeight = 20;
+    let width = window.innerWidth * 0.9;
+    let height = window.innerHeight * 0.9;
+    const borderWidth = 10;
+    const borderHeight = 10;
     width -= borderWidth;
     height -= borderHeight;
 
