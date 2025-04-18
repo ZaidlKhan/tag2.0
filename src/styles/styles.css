@@ -29,23 +29,31 @@ body {
     margin-bottom: 20px;
 }
 
-#main-menu button,
+button,
 #submit-code {
     font-family: Arial, sans-serif;
     font-size: 24px;
     padding: 10px 20px;
-    background: #4CAF50;
-    color: white;
-    border: none;
+    background: #2E4B3A;
+    /* Dark Forest Green */
+    color: #FFFFFF;
+    /* White */
+    border: 2px solid #4A7043;
+    /* Olive Green border */
     border-radius: 5px;
     cursor: pointer;
     margin: 10px;
     transition: background 0.3s;
+    width: 300px;
+    /* Adjusted for consistency, was 40vh */
 }
 
 #main-menu button:hover,
 #submit-code:hover {
-    background: #45a049;
+    background: #6BBF59;
+    /* Vibrant Lime Green for hover */
+    border-color: #4A7043;
+    /* Maintain Olive Green border */
 }
 
 #lobby-code {
@@ -184,4 +192,12 @@ body {
 
 #abilities {
     margin-top: 10px;
+}
+
+#button-text {
+    width: 90%;
+}
+
+.font {
+    size: 20px;
 }

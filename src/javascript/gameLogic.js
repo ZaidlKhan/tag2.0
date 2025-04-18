@@ -1,4 +1,4 @@
-import { CELL_SIZE, TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
+import { TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
 import { Player } from './player.js';
 import { HUD } from './hud.js';
 import { collides } from './utils/utils.js';
