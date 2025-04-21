@@ -1,19 +1,32 @@
+@font-face {
+    font-family: 'slkscr';
+    src: url('Font/slkscr.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 html,
 body {
     margin: 0;
     padding: 0;
     height: 100%;
-    background: #000;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: url('/assets/images/arcade_cab.png') no-repeat center center;
+    background-size: 70% 95%;
+    background-color: #050F17;
 }
 
 #main-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
+    position: absolute;
+    top: 63.8%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 450px;
+    background: rgba(0, 0, 0, 0.8);
     color: white;
     display: flex;
     flex-direction: column;
@@ -23,22 +36,19 @@ body {
 }
 
 #main-menu h1 {
-    font-family: Arial, sans-serif;
+    font-family: 'slkscr', Arial, sans-serif;
     font-size: 60px;
     margin-bottom: 20px;
 }
 
 button,
 #submit-code {
-    font-family: Arial, sans-serif;
+    font-family: 'slkscr', Arial, sans-serif;
     font-size: 24px;
     padding: 10px 20px;
-    background: #2E4B3A;
-    /* Dark Forest Green */
+    background: #4A2C0F;
     color: #FFFFFF;
-    /* White */
-    border: 2px solid #4A7043;
-    /* Olive Green border */
+    border: 2px solid #7A4A20;
     border-radius: 5px;
     cursor: pointer;
     margin: 10px;
@@ -48,14 +58,12 @@ button,
 
 #main-menu button:hover,
 #submit-code:hover {
-    background: #6BBF59;
-    /* Vibrant Lime Green for hover */
-    border-color: #4A7043;
-    /* Maintain Olive Green border */
+    background: #FF8C00;
+    border-color: #7A4A20;
 }
 
 #lobby-code {
-    font-family: Arial, sans-serif;
+    font-family: 'slkscr', Arial, sans-serif;
     font-size: 18px;
     padding: 10px;
     margin: 10px;
@@ -63,107 +71,100 @@ button,
 }
 
 #loading-screen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    top: 63.8%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 450px;
     background: rgba(0, 0, 0, 0.8);
     color: white;
     display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 50;
 }
 
 #loading-screen h1 {
-    font-family: Arial, sans-serif;
+    font-family: 'slkscr', Arial, sans-serif;
     font-size: 40px;
     margin-bottom: 20px;
 }
 
 #loading-screen p {
-    font-family: Arial, sans-serif;
+    font-family: 'slkscr', Arial, sans-serif;
     font-size: 24px;
 }
 
+#game-title {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'slkscr', Arial, sans-serif;
+    font-size: 100px;
+    color: white;
+    z-index: 50;
+}
+
+
 #game-container {
     position: absolute;
-    top: 50%;
+    top: 63.8%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 1000px;
+    height: 450px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     align-items: center;
-    max-width: 100vw;
-    /* Increased from 90vw */
-    max-height: 100vh;
-    /* Increased from 95vh */
+    z-index: 50;
 }
 
 #gameCanvas {
-    border: 10px solid #444;
-    background: white;
-    box-sizing: border-box;
-    max-width: 100%;
-    max-height: 90vh;
-    /* Increased from 85vh */
-}
-
-#hud {
     width: 100%;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    font-family: Arial, sans-serif;
-    padding: 10px;
+    height: 100%;
+    background: #FAFAFA;
     box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-#stats {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-#score,
-#timer {
-    font-size: 16px;
+    z-index: 100;
 }
 
 #stamina-container {
+    position: absolute;
+    top: 63.8%;
+    left: 5%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
     align-items: center;
+    z-index: 150;
 }
 
 #stamina-label {
-    font-size: 16px;
-    margin-bottom: 5px;
+    font-family: 'slkscr', Arial, sans-serif;
+    font-size: 30px;
+    color: white;
+    margin-bottom: 10px;
 }
 
 #stamina-bar {
-    width: 200px;
-    height: 10px;
-    background-color: gray;
+    width: 100px;
+    height: 350px;
+    background-color: rgb(163, 160, 160);
+    border: 2px solid #7A4A20;
+    border-radius: 5px;
+    position: relative;
+    transform: rotate(180deg);
+    transform-origin: center center;
 }
 
 #stamina-fill {
-    height: 100%;
+    width: 100%;
     background-color: green;
-    transition: width 0.1s;
-}
-
-#ability-bar {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-}
-
-#ability1,
-#ability2 {
-    font-size: 16px;
+    transition: height 0.1s;
+    top: 0;
 }

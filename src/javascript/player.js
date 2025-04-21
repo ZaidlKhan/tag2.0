@@ -22,9 +22,7 @@ export class Player {
             ArrowDown: false,
             ArrowLeft: false,
             ArrowRight: false,
-            ' ': false,
-            's': false,
-            'd': false
+            ' ': false
         };
     }
 
@@ -90,10 +88,6 @@ export class Player {
                 if (this.penaltyTime === 0 || (currentTime - this.penaltyTime) >= STAMINA_PENALTY_DURATION) {
                     this.isBoosting = true;
                 }
-            } else if (e.key === 's') {
-                console.log(`${this.role} used ability 1: ${this.role === 'hider' ? 'Seek' : 'Hunt'}`);
-            } else if (e.key === 'd') {
-                console.log(`${this.role} used ability 2: ${this.role === 'hider' ? 'Hide' : 'Trap'}`);
             }
         }
     }

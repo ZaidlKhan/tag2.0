@@ -1,6 +1,5 @@
-import { TOTAL_REWARDS, PLAYER_RADIUS } from '../config.js';
+import { TOTAL_REWARDS, PLAYER_RADIUS, STAMINA_MAX } from '../config.js';
 import { Player } from './player.js';
-import { HUD } from './hud.js';
 import { collides } from './utils/utils.js';
 import { emitPositionUpdate } from './network.js';
 
@@ -8,7 +7,6 @@ let walls = [];
 let rewards = [];
 let localPlayer;
 let remotePlayer;
-let hud;
 let role;
 let lobbyCode;
 let socketId;
@@ -18,7 +16,6 @@ export function initGameLogic() {
     rewards = [];
     localPlayer = null;
     remotePlayer = null;
-    hud = null;
     role = null;
     lobbyCode = null;
     socketId = null;
@@ -39,20 +36,23 @@ export function startGame(hider, seeker, maze, id) {
     };
     walls = maze.walls;
     rewards = maze.rewards;
-    hud = new HUD(TOTAL_REWARDS, localPlayer);
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keyup', handleKeyUp);
 }
 
 export function updateGameLogic(delta) {
-    if (!hud || !localPlayer) return;
-
-    hud.update(performance.now());
-    if (hud.isGameOver()) return;
+    if (!localPlayer) return;
 
     localPlayer.update(delta);
     localPlayer.move(walls);
     emitPositionUpdate(localPlayer.x, localPlayer.y, lobbyCode);
+
+    // Update stamina bar
+    const staminaFill = document.getElementById('stamina-fill');
+    if (staminaFill) {
+        const staminaPercent = (localPlayer.getStamina() / STAMINA_MAX) * 100;
+        staminaFill.style.height = `${staminaPercent}%`;
+    }
 }
 
 export function checkRewardCollection() {
@@ -60,7 +60,6 @@ export function checkRewardCollection() {
     const playerRect = { x: localPlayer.x, y: localPlayer.y, width: PLAYER_RADIUS, height: PLAYER_RADIUS };
     rewards = rewards.filter(reward => {
         if (collides(playerRect, reward)) {
-            hud.collectReward();
             return false;
         }
         return true;
@@ -75,7 +74,7 @@ export function updateRemotePlayer(id, x, y) {
 }
 
 export function getGameState() {
-    return { walls, rewards, localPlayer, remotePlayer, hud, role, lobbyCode, stamina: localPlayer ? localPlayer.getStamina() : 0 };
+    return { walls, rewards, localPlayer, remotePlayer, role, lobbyCode, stamina: localPlayer ? localPlayer.getStamina() : 0 };
 }
 
 export function setLobbyCode(code) {

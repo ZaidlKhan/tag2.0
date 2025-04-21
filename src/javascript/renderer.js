@@ -1,17 +1,11 @@
-// src/javascript/renderer.js
 import { CELL_SIZE, COLS, ROWS, VISIBILITY_RADIUS, REVEAL_WALLS, PLAYER_RADIUS } from '../config.js';
 import { drawRectangles, isRewardVisible, getCenter, isPointInRect } from './utils/utils.js';
 import { getGameState } from './gameLogic.js';
 
 export function render(ctx) {
-    const { walls, rewards, localPlayer, remotePlayer, hud, role } = getGameState();
+    const { walls, rewards, localPlayer, remotePlayer, role } = getGameState();
 
-    if (!localPlayer || !hud) return;
-
-    if (hud.isGameOver()) {
-        hud.drawGameOver(ctx);
-        return;
-    }
+    if (!localPlayer) return;
 
     drawRectangles(ctx, [{ x: 0, y: 0, width: COLS * CELL_SIZE, height: ROWS * CELL_SIZE }], 'white');
     drawMaze(walls, ctx);
@@ -32,7 +26,10 @@ function drawMaze(walls, ctx) {
 
 function drawRewards(rewards, ctx) {
     ctx.fillStyle = 'gold';
-    const { localPlayer } = getGameState();
+    const { localPlayer, role } = getGameState();
+    if (role == 'seeker') {
+        return;
+    }
     rewards.forEach(reward => {
         if (REVEAL_WALLS || isRewardVisible(reward, localPlayer)) {
             ctx.fillRect(reward.x, reward.y, reward.width, reward.height);

@@ -55,24 +55,24 @@ export function isPointInRect(point, rect) {
 }
 
 export function displayAbilities(abilityBar, role) {
-    abilityBar.innerHTML += `
+    abilityBar.innerHTML = `
         ${role === 'hider' ? `
             <div class="ability-slot">
-                <img src="https://placehold.co/30x30" alt="Seek">
-                <span>Seek - Reveals Path</span>
+                <img class="ability-icon" src="/assets/images/seek.png" alt="Seek Ability">
+                <span class="ability-text">Seek - Reveals Path</span>
             </div>
             <div class="ability-slot">
-                <img src="https://placehold.co/30x30" alt="Hide">
-                <span>Hide - Turn Invisible</span>
+                <img class="ability-icon" src="/assets/images/hide.png" alt="Hide Ability">
+                <span class="ability-text">Hide - Turn Invisible</span>
             </div>
         ` : `
             <div class="ability-slot">
-                <img src="https://placehold.co/30x30" alt="Hunt">
-                <span>Hunt - Track Hider</span>
+                <img class="ability-icon" src="/assets/images/hunt.png" alt="Hunt Ability">
+                <span class="ability-text">Hunt - Track Hider</span>
             </div>
             <div class="ability-slot">
-                <img src="https://placehold.co/30x30" alt="Trap">
-                <span>Trap - Place Trap</span>
+                <img class="ability-icon" src="/assets/images/trap.png" alt="Trap Ability">
+                <span class="ability-text">Trap - Place Trap</span>
             </div>
         `}
     `;

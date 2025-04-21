@@ -1,5 +1,5 @@
 export const CELL_SIZE = 35;
-export const COLS = 40;
+export const COLS = 60;
 export const ROWS = 25;
 export const VISIBILITY_RADIUS = 100;
 export const PLAYER_SPEED = 2;
