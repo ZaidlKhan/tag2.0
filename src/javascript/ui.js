@@ -1,3 +1,4 @@
+
 import { joinLobby, createLobby, joinRandomLobby } from './network.js';
 import { getGameState } from './gameLogic.js';
 
@@ -11,6 +12,7 @@ const joinRandomBtn = document.getElementById('join-random');
 const lobbyCodeInput = document.getElementById('lobby-code');
 const submitCodeBtn = document.getElementById('submit-code');
 const staminaContainer = document.getElementById('stamina-container');
+const joystick = document.getElementById('joystick');
 
 export function setupUI() {
     createLobbyBtn.addEventListener('click', () => {
@@ -56,6 +58,7 @@ export function startGameUI() {
     loadingScreen.style.display = 'none';
     gameContainer.style.display = 'flex';
     staminaContainer.style.display = 'flex';
+    joystick.style.display = 'block';
 }
 
 export function resetToMainMenu() {
@@ -67,4 +70,5 @@ export function resetToMainMenu() {
     joinLobbyBtn.style.display = 'block';
     lobbyCodeInput.value = '';
     staminaContainer.style.display = 'none';
+    joystick.style.display = 'none';
 }

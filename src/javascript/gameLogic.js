@@ -47,11 +47,54 @@ export function updateGameLogic(delta) {
     localPlayer.move(walls);
     emitPositionUpdate(localPlayer.x, localPlayer.y, lobbyCode);
 
-    // Update stamina bar
     const staminaFill = document.getElementById('stamina-fill');
     if (staminaFill) {
         const staminaPercent = (localPlayer.getStamina() / STAMINA_MAX) * 100;
         staminaFill.style.height = `${staminaPercent}%`;
+    }
+
+    const joystick = document.getElementById('joystick');
+    if (joystick) {
+        const { state, direction } = localPlayer.getJoystickState();
+        let rotation = 0;
+
+        if (state === 'diagonal') {
+            if (direction === 'up-left' || direction === 'down-right') {
+                if (direction === 'down-right') {
+                    rotation = 180;
+                } else if (direction === 'up-left') {
+                    rotation = 0;
+                }
+                joystick.src = '../assets/images/joystick_corner_top.png';
+            } else if (direction === 'down-left' || direction === 'up-right') {
+                if (direction === 'down-left') {
+                    rotation = 0;
+                } else if (direction === 'up-right') {
+                    rotation = 180;
+                }
+                joystick.src = '../assets/images/joystick_corner_bot.png';
+            }
+        } else if (state === 'vertical_horizontal') {
+            if (direction === 'up' || direction === 'down') {
+                joystick.src = '../assets/images/joystick_down.png';
+                if (direction === 'up') {
+                    rotation = 180;
+                } else if (direction === 'down') {
+                    rotation = 0;
+                }
+            } else if (direction === 'left' || direction === 'right') {
+                joystick.src = '../assets/images/joystick_left.png';
+                if (direction === 'left') {
+                    rotation = 0;
+                } else if (direction === 'right') {
+                    rotation = 180;
+                }
+            }
+        } else {
+            joystick.src = '../assets/images/joystick.png';
+        }
+
+        joystick.style.transform = `translateY(-50%) rotate(${rotation}deg)`;
     }
 }
 

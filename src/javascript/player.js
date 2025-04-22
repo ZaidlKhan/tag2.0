@@ -36,10 +36,8 @@ export class Player {
     update(delta) {
         const currentTime = performance.now() / 1000;
 
-        // Check if in penalty period
         const inPenalty = this.penaltyTime > 0 && (currentTime - this.penaltyTime) < STAMINA_PENALTY_DURATION;
 
-        // Update stamina
         if (this.isBoosting && this.stamina > 0 && !inPenalty) {
             this.stamina = Math.max(0, this.stamina - STAMINA_DEPLETION_RATE * delta);
             if (this.stamina === 0) {
@@ -54,7 +52,6 @@ export class Player {
             }
         }
 
-        // Update speed
         this.speed = this.isBoosting ? this.boostSpeed : this.baseSpeed;
     }
 
@@ -99,6 +96,31 @@ export class Player {
                 this.isBoosting = false;
                 this.lastBoostTime = performance.now() / 1000;
             }
+        }
+    }
+
+    getJoystickState() {
+        const { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } = this.keys;
+        const isVertical = (ArrowUp || ArrowDown) && !(ArrowLeft || ArrowRight);
+        const isHorizontal = (ArrowLeft || ArrowRight) && !(ArrowUp || ArrowDown);
+        const isDiagonal = (ArrowUp || ArrowDown) && (ArrowLeft || ArrowRight);
+
+        if (isDiagonal) {
+            let direction = '';
+            if (ArrowUp && ArrowLeft) direction = 'up-left';
+            else if (ArrowUp && ArrowRight) direction = 'up-right';
+            else if (ArrowDown && ArrowLeft) direction = 'down-left';
+            else if (ArrowDown && ArrowRight) direction = 'down-right';
+            return { state: 'diagonal', direction };
+        } else if (isVertical || isHorizontal) {
+            let direction = 'down';
+            if (ArrowUp) direction = 'up';
+            else if (ArrowDown) direction = 'down';
+            else if (ArrowLeft) direction = 'left';
+            else if (ArrowRight) direction = 'right';
+            return { state: 'vertical_horizontal', direction };
+        } else {
+            return { state: 'standard', direction: null };
         }
     }
 

@@ -168,3 +168,13 @@ button,
     transition: height 0.1s;
     top: 0;
 }
+
+#joystick {
+    position: absolute;
+    top: 450px;
+    left: 1250px;
+    transform: translateY(-50%);
+    width: 210px;
+    height: 210px;
+    z-index: 150;
+}
